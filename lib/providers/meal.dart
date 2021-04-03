@@ -25,15 +25,24 @@ class MealProvider with ChangeNotifier {
   List<Meal> get favoriteMeals => _favoriteMeals;
   List<Meal> get avilableMeal => _avilableMeal;
 
+  List<String> _prefsMealId = [];
+
   void getDataFromSahred() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if (pref.getKeys().isNotEmpty) {
-      _filters["vegan"] = pref.getBool("vegan");
-      _filters["gluten"] = pref.getBool("gluten");
-      _filters["lactose"] = pref.getBool("lactose");
-      _filters["vegetarian"] = pref.getBool("vegetarian");
-      notifyListeners();
+    _filters["vegan"] = pref.getBool("vegan") ?? false;
+    _filters["gluten"] = pref.getBool("gluten") ?? false;
+    _filters["lactose"] = pref.getBool("lactose") ?? false;
+    _filters["vegetarian"] = pref.getBool("vegetarian") ?? false;
+
+    _prefsMealId = pref.getStringList("prefsMealId");
+    if (_prefsMealId != null) {
+      for (int i = 0; i < _prefsMealId.length; i++) {
+        _favoriteMeals
+            .add(DUMMY_MEALS.firstWhere((meal) => meal.id == _prefsMealId[i]));
+      }
     }
+
+    notifyListeners();
   }
 
   void setFilter(String key, bool value) {
@@ -62,13 +71,20 @@ class MealProvider with ChangeNotifier {
     pref.setBool("vegetarian", _filters["vegetarian"]);
   }
 
-  void toggleFavorite(String mealId) {
+  void toggleFavorite(String mealId) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
     final int existingIndex =
         _favoriteMeals.indexWhere((meal) => meal.id == mealId);
+
     if (existingIndex >= 0) {
       _favoriteMeals.removeAt(existingIndex);
+      _prefsMealId.removeAt(existingIndex);
+      pref.setStringList("prefsMealId", _prefsMealId);
     } else {
       _favoriteMeals.add(DUMMY_MEALS.firstWhere((meal) => meal.id == mealId));
+      _prefsMealId.add(DUMMY_MEALS.firstWhere((meal) => meal.id == mealId).id);
+      pref.setStringList("prefsMealId", _prefsMealId);
+      print(_prefsMealId);
     }
     notifyListeners();
   }

@@ -32,7 +32,6 @@ class MyApp extends StatelessWidget {
               ),
         ),
         title: "Meal App",
-        // home: MyHomePage(),
         routes: {
           "/": (context) => TabsScreen(),
           CategoryMealScreen.routeName: (context) => CategoryMealScreen(),
