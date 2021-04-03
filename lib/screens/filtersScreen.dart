@@ -7,11 +7,11 @@ import '../providers/meal.dart';
 class FiltersScreen extends StatelessWidget {
   static const routeName = "/filters";
 
-  Widget buildSwitchListTile(String title, String subTitle, bool value,
-      Function(String key, bool val) updateValue) {
+  Widget buildSwitchListTile(String filterTitle, String title, String subTitle,
+      bool value, Function(String key, bool val) updateValue) {
     return SwitchListTile(
       value: value,
-      onChanged: (val) => updateValue(title, val),
+      onChanged: (val) => updateValue(filterTitle, val),
       title: Text(title),
       subtitle: Text(subTitle),
     );
@@ -36,24 +36,28 @@ class FiltersScreen extends StatelessWidget {
             child: ListView(
               children: [
                 buildSwitchListTile(
+                  "gluten",
                   "Gluten-free",
                   "Only include gluten-free meals.",
                   ctx.watch<MealProvider>().filters["gluten"],
                   ctx.read<MealProvider>().setFilter,
                 ),
                 buildSwitchListTile(
+                  "lactose",
                   "Lactose-free",
                   "Only include Lactose-free meals.",
                   ctx.watch<MealProvider>().filters["lactose"],
                   ctx.read<MealProvider>().setFilter,
                 ),
                 buildSwitchListTile(
+                  "vegan",
                   "Vegan",
                   "Only include Vegan meals.",
                   ctx.watch<MealProvider>().filters["vegan"],
                   ctx.read<MealProvider>().setFilter,
                 ),
                 buildSwitchListTile(
+                  "vegetarian",
                   "Vegetarian",
                   "Only include Vegetarian meals.",
                   ctx.watch<MealProvider>().filters["vegetarian"],

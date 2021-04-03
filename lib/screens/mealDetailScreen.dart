@@ -4,17 +4,8 @@ import 'package:provider/provider.dart';
 import '../dummy_data.dart';
 import '../providers/meal.dart';
 
-typedef void _AddMeal(String mealId);
-
-typedef bool _CheckFavorite(String mealId);
-
 class MealDetailScreen extends StatefulWidget {
   static const routeName = "meal_screen";
-
-  final _AddMeal _addMeal = (_) {};
-  final _CheckFavorite _checkFavorite = (_) {
-    return true;
-  };
 
   @override
   _MealDetailScreenState createState() => _MealDetailScreenState();
