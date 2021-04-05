@@ -3,13 +3,22 @@ import 'package:provider/provider.dart';
 
 import "../widgets/mainDrawer.dart";
 import '../providers/meal.dart';
+import '../providers/theme_provider.dart';
 
 class FiltersScreen extends StatelessWidget {
   static const routeName = "/filters";
 
-  Widget buildSwitchListTile(String filterTitle, String title, String subTitle,
-      bool value, Function(String key, bool val) updateValue) {
-    return SwitchListTile(
+  Widget buildSwitchListTile(
+      String filterTitle,
+      String title,
+      String subTitle,
+      bool value,
+      Function(String key, bool val) updateValue,
+      BuildContext ctx) {
+    return SwitchListTile.adaptive(
+      inactiveTrackColor: ctx.watch<ThemeProvider>().tm == ThemeMode.light
+          ? null
+          : Colors.black,
       value: value,
       onChanged: (val) => updateValue(filterTitle, val),
       title: Text(title),
@@ -29,8 +38,7 @@ class FiltersScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(20),
             child: Text("Adjust your mealselection",
-                // ignore: deprecated_member_use
-                style: Theme.of(context).textTheme.title),
+                style: Theme.of(context).textTheme.headline6),
           ),
           Expanded(
             child: ListView(
@@ -41,6 +49,7 @@ class FiltersScreen extends StatelessWidget {
                   "Only include gluten-free meals.",
                   ctx.watch<MealProvider>().filters["gluten"],
                   ctx.read<MealProvider>().setFilter,
+                  ctx,
                 ),
                 buildSwitchListTile(
                   "lactose",
@@ -48,6 +57,7 @@ class FiltersScreen extends StatelessWidget {
                   "Only include Lactose-free meals.",
                   ctx.watch<MealProvider>().filters["lactose"],
                   ctx.read<MealProvider>().setFilter,
+                  ctx,
                 ),
                 buildSwitchListTile(
                   "vegan",
@@ -55,6 +65,7 @@ class FiltersScreen extends StatelessWidget {
                   "Only include Vegan meals.",
                   ctx.watch<MealProvider>().filters["vegan"],
                   ctx.read<MealProvider>().setFilter,
+                  ctx,
                 ),
                 buildSwitchListTile(
                   "vegetarian",
@@ -62,6 +73,7 @@ class FiltersScreen extends StatelessWidget {
                   "Only include Vegetarian meals.",
                   ctx.watch<MealProvider>().filters["vegetarian"],
                   ctx.read<MealProvider>().setFilter,
+                  ctx,
                 ),
               ],
             ),

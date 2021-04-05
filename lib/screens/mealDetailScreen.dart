@@ -12,11 +12,16 @@ class MealDetailScreen extends StatefulWidget {
 }
 
 class _MealDetailScreenState extends State<MealDetailScreen> {
+  Color accentColor;
+
+  bool useWhiteForeground(Color backgroundColor) {
+    return 1.05 / (backgroundColor.computeLuminance() + 0.5) > 4.5;
+  }
+
   Widget buildSectionTitle(BuildContext context, String text) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
-      // ignore: deprecated_member_use
-      child: Text(text, style: Theme.of(context).textTheme.title),
+      child: Text(text, style: Theme.of(context).textTheme.headline6),
     );
   }
 
@@ -33,6 +38,12 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       width: 300,
       child: child,
     );
+  }
+
+  @override
+  void initState() {
+    accentColor = Theme.of(context).accentColor;
+    super.initState();
   }
 
   @override
@@ -56,12 +67,17 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
               ListView.builder(
                 itemBuilder: (context, index) {
                   return Card(
-                    color: Theme.of(context).accentColor,
+                    color: accentColor,
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       child: Text(
                         selectedMeal.ingredients[index],
+                        style: TextStyle(
+                          color: useWhiteForeground(accentColor)
+                              ? Colors.white
+                              : Colors.black,
+                        ),
                       ),
                     ),
                   );
@@ -78,6 +94,11 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                       ListTile(
                         title: Text(
                           selectedMeal.steps[index],
+                          style: TextStyle(
+                            color: useWhiteForeground(accentColor)
+                                ? Colors.white
+                                : Colors.black,
+                          ),
                         ),
                         leading: CircleAvatar(child: Text("# ${index + 1}")),
                       ),
