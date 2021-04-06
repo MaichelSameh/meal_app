@@ -7,12 +7,22 @@ import '../providers/meal.dart';
 class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double dw = MediaQuery.of(context).size.width;
     return Consumer<MealProvider>(
       builder: (ctx, _, child) {
         return (ctx.watch<MealProvider>().favoriteMeals.isEmpty)
             ? Center(
                 child: Text("You have no favorites yet - start adding some!"))
-            : ListView.builder(
+            : GridView.builder(
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  crossAxisSpacing: 0,
+                  maxCrossAxisExtent: dw >= 500 ? 500 : dw,
+                  mainAxisSpacing: 0,
+                  childAspectRatio:
+                      MediaQuery.of(context).orientation == Orientation.portrait
+                          ? dw / (dw * 0.75)
+                          : dw / (dw * 0.8),
+                ),
                 itemCount: ctx.watch<MealProvider>().favoriteMeals.length,
                 itemBuilder: (context, index) {
                   return MealItem(

@@ -57,75 +57,91 @@ class MealItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => selectMeal(context),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        elevation: 4,
-        margin: EdgeInsets.all(10),
-        child: Column(
-          children: <Widget>[
-            Stack(
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15),
-                  ),
-                  child: Image.network(
-                    imageUrl,
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Positioned(
-                  bottom: 20,
-                  right: 10,
-                  child: Container(
-                    width: 300,
-                    color: Colors.black54,
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                    child: Text(
-                      title,
-                      style: TextStyle(fontSize: 26, color: Colors.white),
-                      softWrap: true,
-                      overflow: TextOverflow.fade,
+      child: LayoutBuilder(
+        builder: (ctx, constrain) => Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          elevation: 4,
+          margin: EdgeInsets.all(10),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: constrain.maxHeight * 4 / 5 - 10,
+                child: Stack(
+                  children: <Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      ),
+                      child: Hero(
+                        tag: id,
+                        child: InteractiveViewer(
+                          child: FadeInImage(
+                            width: double.infinity,
+                            image: NetworkImage(imageUrl),
+                            placeholder: AssetImage("assets/images/a2.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.schedule,
-                          color: Theme.of(context).buttonColor),
-                      SizedBox(width: 6),
-                      Text("$duration min"),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.work, color: Theme.of(context).buttonColor),
-                      SizedBox(width: 6),
-                      Text(complexityText),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.attach_money,
-                          color: Theme.of(context).buttonColor),
-                      SizedBox(width: 6),
-                      Text(affordabilityText),
-                    ],
-                  ),
-                ],
+                    Positioned(
+                      bottom: 20,
+                      right: 10,
+                      child: Container(
+                        width: 300,
+                        color: Colors.black54,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                        child: Text(
+                          title,
+                          style: TextStyle(fontSize: 26, color: Colors.white),
+                          softWrap: true,
+                          overflow: TextOverflow.fade,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+              Container(
+                height: (constrain.maxHeight / 5) - 10,
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.schedule,
+                            color: Theme.of(context).buttonColor),
+                        SizedBox(width: 6),
+                        Text("$duration min",
+                            style: Theme.of(context).textTheme.bodyText1),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.work, color: Theme.of(context).buttonColor),
+                        SizedBox(width: 6),
+                        Text(complexityText,
+                            style: Theme.of(context).textTheme.bodyText1),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.attach_money,
+                            color: Theme.of(context).buttonColor),
+                        SizedBox(width: 6),
+                        Text(affordabilityText,
+                            style: Theme.of(context).textTheme.bodyText1),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

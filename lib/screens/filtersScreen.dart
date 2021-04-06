@@ -8,6 +8,10 @@ import '../providers/theme_provider.dart';
 class FiltersScreen extends StatelessWidget {
   static const routeName = "/filters";
 
+  final bool fromOnBoarding;
+
+  FiltersScreen({this.fromOnBoarding = false});
+
   Widget buildSwitchListTile(
       String filterTitle,
       String title,
@@ -21,8 +25,8 @@ class FiltersScreen extends StatelessWidget {
           : Colors.black,
       value: value,
       onChanged: (val) => updateValue(filterTitle, val),
-      title: Text(title),
-      subtitle: Text(subTitle),
+      title: Text(title, style: Theme.of(ctx).textTheme.bodyText1),
+      subtitle: Text(subTitle, style: Theme.of(ctx).textTheme.bodyText2),
     );
   }
 
@@ -30,55 +34,66 @@ class FiltersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MealProvider>(
       builder: (ctx, provider, child) => Scaffold(
-        appBar: AppBar(
-          title: Text("Your Filters"),
-        ),
-        drawer: MainDrawer(),
-        body: Column(children: [
-          Container(
-            padding: EdgeInsets.all(20),
-            child: Text("Adjust your mealselection",
-                style: Theme.of(context).textTheme.headline6),
-          ),
-          Expanded(
-            child: ListView(
-              children: [
-                buildSwitchListTile(
-                  "gluten",
-                  "Gluten-free",
-                  "Only include gluten-free meals.",
-                  ctx.watch<MealProvider>().filters["gluten"],
-                  ctx.read<MealProvider>().setFilter,
-                  ctx,
-                ),
-                buildSwitchListTile(
-                  "lactose",
-                  "Lactose-free",
-                  "Only include Lactose-free meals.",
-                  ctx.watch<MealProvider>().filters["lactose"],
-                  ctx.read<MealProvider>().setFilter,
-                  ctx,
-                ),
-                buildSwitchListTile(
-                  "vegan",
-                  "Vegan",
-                  "Only include Vegan meals.",
-                  ctx.watch<MealProvider>().filters["vegan"],
-                  ctx.read<MealProvider>().setFilter,
-                  ctx,
-                ),
-                buildSwitchListTile(
-                  "vegetarian",
-                  "Vegetarian",
-                  "Only include Vegetarian meals.",
-                  ctx.watch<MealProvider>().filters["vegetarian"],
-                  ctx.read<MealProvider>().setFilter,
-                  ctx,
-                ),
-              ],
+        drawer: fromOnBoarding ? null : MainDrawer(),
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: false,
+              title: fromOnBoarding ? null : Text("Your Filters"),
+              backgroundColor: fromOnBoarding
+                  ? Theme.of(context).canvasColor
+                  : Theme.of(context).primaryColor,
+              elevation: fromOnBoarding ? 0 : 5,
             ),
-          ),
-        ]),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                      "Adjust your mealselection",
+                      style: Theme.of(context).textTheme.headline6,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  buildSwitchListTile(
+                    "gluten",
+                    "Gluten-free",
+                    "Only include gluten-free meals.",
+                    ctx.watch<MealProvider>().filters["gluten"],
+                    ctx.read<MealProvider>().setFilter,
+                    ctx,
+                  ),
+                  buildSwitchListTile(
+                    "lactose",
+                    "Lactose-free",
+                    "Only include Lactose-free meals.",
+                    ctx.watch<MealProvider>().filters["lactose"],
+                    ctx.read<MealProvider>().setFilter,
+                    ctx,
+                  ),
+                  buildSwitchListTile(
+                    "vegan",
+                    "Vegan",
+                    "Only include Vegan meals.",
+                    ctx.watch<MealProvider>().filters["vegan"],
+                    ctx.read<MealProvider>().setFilter,
+                    ctx,
+                  ),
+                  buildSwitchListTile(
+                    "vegetarian",
+                    "Vegetarian",
+                    "Only include Vegetarian meals.",
+                    ctx.watch<MealProvider>().filters["vegetarian"],
+                    ctx.read<MealProvider>().setFilter,
+                    ctx,
+                  ),
+                  SizedBox(height: fromOnBoarding ? 80 : 0),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

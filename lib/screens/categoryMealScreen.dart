@@ -31,11 +31,21 @@ class _CategoryMealScreenState extends State<CategoryMealScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double dw = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Text(categoryTitle),
       ),
-      body: ListView.builder(
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          crossAxisSpacing: 0,
+          maxCrossAxisExtent: dw >= 500 ? 500 : dw,
+          mainAxisSpacing: 0,
+          childAspectRatio:
+              MediaQuery.of(context).orientation == Orientation.portrait
+                  ? dw / (dw * 0.8)
+                  : dw / (dw * 0.78),
+        ),
         itemBuilder: (context, index) {
           return MealItem(
             id: categoryMeal[index].id,

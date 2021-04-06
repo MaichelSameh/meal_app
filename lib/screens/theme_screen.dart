@@ -9,6 +9,10 @@ import '../widgets/mainDrawer.dart';
 class ThemeScreen extends StatelessWidget {
   static const String routeName = "/themes";
 
+  final bool fromOnBoarding;
+
+  ThemeScreen({this.fromOnBoarding = false});
+
   Widget buildRadioListTile(
       ThemeMode themeVal, String text, IconData icon, BuildContext ctx) {
     return RadioListTile(
@@ -67,8 +71,11 @@ class ThemeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (ctx, themeProvider, child) => Scaffold(
-        appBar: AppBar(title: Text("Your Themes")),
-        drawer: MainDrawer(),
+        appBar: fromOnBoarding
+            ? AppBar(
+                backgroundColor: Theme.of(context).canvasColor, elevation: 0)
+            : AppBar(title: Text("Your Themes")),
+        drawer: fromOnBoarding ? null : MainDrawer(),
         body: Column(
           children: [
             Container(
@@ -108,6 +115,7 @@ class ThemeScreen extends StatelessWidget {
                   ),
                   buildListTile(ctx, "primary"),
                   buildListTile(ctx, "accent"),
+                  SizedBox(height: fromOnBoarding ? 80 : 0),
                 ],
               ),
             )

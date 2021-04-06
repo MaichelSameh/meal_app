@@ -26,24 +26,34 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   }
 
   Widget buildContainer(Widget child) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(10),
-      height: 150,
-      width: 300,
-      child: child,
+    return Builder(
+      builder: (ctx) {
+        var md = MediaQuery.of(ctx);
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
+          height: md.orientation == Orientation.portrait
+              ? md.size.height * 0.25
+              : (md.size.width * 0.5),
+          width: md.orientation == Orientation.portrait
+              ? md.size.width
+              : (md.size.width * 0.5 - 30),
+          child: child,
+        );
+      },
     );
   }
 
   @override
-  void initState() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
     accentColor = Theme.of(context).accentColor;
-    super.initState();
   }
 
   @override
@@ -52,65 +62,106 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
     final selectedMeal = DUMMY_MEALS.firstWhere((meal) {
       return (meal.id == mealId);
     });
-    return Scaffold(
-      appBar: AppBar(title: Text(selectedMeal.title)),
-      body: SingleChildScrollView(
-        child: Column(
+    var liIngredient = ListView.builder(
+      padding: EdgeInsets.zero,
+      itemBuilder: (context, index) {
+        return Card(
+          color: accentColor,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Text(
+              selectedMeal.ingredients[index],
+              style: TextStyle(
+                color: useWhiteForeground(accentColor)
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
+          ),
+        );
+      },
+      itemCount: selectedMeal.ingredients.length,
+    );
+    var liSteps = ListView.builder(
+      padding: EdgeInsets.zero,
+      itemBuilder: (context, index) {
+        return Column(
           children: [
-            Container(
-              height: 300,
-              width: double.infinity,
-              child: Image.network(selectedMeal.imageUrl, fit: BoxFit.cover),
-            ),
-            buildSectionTitle(context, "Ingredients"),
-            buildContainer(
-              ListView.builder(
-                itemBuilder: (context, index) {
-                  return Card(
-                    color: accentColor,
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      child: Text(
-                        selectedMeal.ingredients[index],
-                        style: TextStyle(
-                          color: useWhiteForeground(accentColor)
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                itemCount: selectedMeal.ingredients.length,
+            ListTile(
+              title: Text(
+                selectedMeal.steps[index],
+                style: TextStyle(
+                  color: useWhiteForeground(accentColor)
+                      ? Colors.white
+                      : Colors.black,
+                ),
               ),
+              leading: CircleAvatar(child: Text("# ${index + 1}")),
             ),
-            buildSectionTitle(context, "Steps"),
-            buildContainer(
-              ListView.builder(
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      ListTile(
-                        title: Text(
-                          selectedMeal.steps[index],
-                          style: TextStyle(
-                            color: useWhiteForeground(accentColor)
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        ),
-                        leading: CircleAvatar(child: Text("# ${index + 1}")),
-                      ),
-                      Divider(),
-                    ],
-                  );
-                },
-                itemCount: selectedMeal.steps.length,
-              ),
-            )
+            Divider(),
           ],
-        ),
+        );
+      },
+      itemCount: selectedMeal.steps.length,
+    );
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(selectedMeal.title),
+              background: Hero(
+                tag: selectedMeal.id,
+                child: InteractiveViewer(
+                  child: FadeInImage(
+                    image: NetworkImage(selectedMeal.imageUrl),
+                    placeholder: AssetImage("assets/images/a2.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SliverList(
+              delegate: SliverChildListDelegate([
+            MediaQuery.of(context).orientation == Orientation.portrait
+                ? Column(
+                    children: [
+                      buildSectionTitle(context, "Ingredients"),
+                      buildContainer(
+                        liIngredient,
+                      ),
+                      buildSectionTitle(context, "Steps"),
+                      buildContainer(
+                        liSteps,
+                      )
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          buildSectionTitle(context, "Ingredients"),
+                          buildContainer(
+                            liIngredient,
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          buildSectionTitle(context, "Steps"),
+                          buildContainer(
+                            liSteps,
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+          ]))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => setState(() {
